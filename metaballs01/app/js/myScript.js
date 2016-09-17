@@ -7,29 +7,55 @@ project.currentStyle = {
     fillColor: 'black'
 };
 
-var ballPositions = [[400, 100], [580, 100], [760, 100]];
+var function1 = function() {
+    alert('Contact Us')
+};
+var function2 = function() {
+    alert('Get Info');
+}
+var function3 = function() {
+    alert('Register');
+}
+
+var ballPositions = [{pos:[400, 100], func: function1.toString()}, {pos: [580, 100], func: function2.toString()}, {pos: [760, 100], func: function3.toString()}];
 
 var handle_len_rate = 2.4;
 var circlePaths = [];
 var radius = 40;
 for (var i = 0, l = ballPositions.length; i < l; i++) {
     var circlePath = new Path.Circle({
-        center: ballPositions[i],
+        center: ballPositions[i].pos,
         radius: 25
     });
     circlePaths.push(circlePath);
+    circlePath.data.func = ballPositions[i].func;
+
+    circlePath.onClick = function(event){
+        // this.fillColor = 'red';
+        // alert('oooooo');
+        // console.log('clicked func='+this.data.func);
+        var asFunc = eval('('+ this.data.func+')');
+
+        asFunc();
+    }
 }
 
 var largeCircle = new Path.Circle({
     center: [676, 433],
     radius: 20
 });
+// largeCircle.onClick = function(event){
+//     alert('LLLLLLLL ');
+// }
 circlePaths.push(largeCircle);
+largeCircle.sendToBack();
 
 function onMouseMove(event) {
     largeCircle.position = event.point;
     generateConnections(circlePaths);
 }
+
+
 
 var connections = new Group();
 function generateConnections(paths) {
