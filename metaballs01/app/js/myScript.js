@@ -4,7 +4,7 @@
 // Ported from original Metaball script by SATO Hiroyuki
 // http://park12.wakwak.com/~shp/lc/et/en_aics_script.html
 project.currentStyle = {
-    fillColor: 'black'
+    fillColor: 'white'
 };
 
 var function1 = function() {
@@ -17,7 +17,9 @@ var function3 = function() {
     alert('Register');
 }
 
-var ballPositions = [{pos:[400, 100], func: function1.toString()}, {pos: [580, 100], func: function2.toString()}, {pos: [760, 100], func: function3.toString()}];
+var ballPositions = [{pos:[350, 100], func: function1.toString(), text: 'INFO'},
+    {pos: [580, 100], func: function2.toString(), text: 'BOOK'},
+    {pos: [810, 100], func: function3.toString(), text: 'CONTACT'}];
 
 var handle_len_rate = 2.4;
 var circlePaths = [];
@@ -25,24 +27,60 @@ var radius = 40;
 for (var i = 0, l = ballPositions.length; i < l; i++) {
     var circlePath = new Path.Circle({
         center: ballPositions[i].pos,
-        radius: 25
+        radius: 65
     });
     circlePaths.push(circlePath);
     circlePath.data.func = ballPositions[i].func;
+    circlePath.data.text = ballPositions[i].text;
+    circlePath.fillColor = '#F35342';
+    circlePath.strokeColor = 'white';
+    circlePath.strokeWidth = 2;
+
+    circlePath.data.pointText = new PointText({
+        point: [ballPositions[i].pos[0],ballPositions[i].pos[1]+7],
+        content: ballPositions[i].text,
+        fillColor: 'white',
+        fontFamily: 'Montserrat',
+        fontWeight: 400,
+        fontSize: 20,
+        justification: 'center'
+    });
+
+    circlePath.data.pointText.data.func = circlePath.data.func;
+    circlePath.data.pointText.data.parent = circlePath;
 
     circlePath.onClick = function(event){
-        // this.fillColor = 'red';
-        // alert('oooooo');
-        // console.log('clicked func='+this.data.func);
         var asFunc = eval('('+ this.data.func+')');
-
         asFunc();
+    }
+    circlePath.data.pointText.onClick = function(event){
+        var asFunc = eval('('+ this.data.func+')');
+        asFunc();
+    }
+
+    circlePath.onMouseEnter = function(event) {
+        this.fillColor = 'white';
+        this.data.pointText.fillColor = '#F35342';
+    }
+    circlePath.onMouseLeave = function(event) {
+        this.data.pointText.fillColor = 'white';
+        this.fillColor = '#F35342';
+    }
+
+    circlePath.data.pointText.onMouseEnter = function(event) {
+        this.fillColor = '#F35342';
+        this.data.parent.fillColor = 'white';
+    }
+
+    circlePath.data.pointText.onMouseLeave = function(event) {
+        this.fillColor = '#F35342';
+        this.data.parent.fillColor = 'white';
     }
 }
 
 var largeCircle = new Path.Circle({
     center: [676, 433],
-    radius: 20
+    radius: 15
 });
 // largeCircle.onClick = function(event){
 //     alert('LLLLLLLL ');
@@ -52,7 +90,9 @@ largeCircle.sendToBack();
 
 function onMouseMove(event) {
     largeCircle.position = event.point;
+    // circlePaths.bringToFront();
     generateConnections(circlePaths);
+
 }
 
 
@@ -69,6 +109,7 @@ function generateConnections(paths) {
                 connections.appendTop(path);
                 path.removeOnMove();
             }
+
         }
     }
 }
