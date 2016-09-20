@@ -92,7 +92,6 @@ function onMouseMove(event) {
     largeCircle.position = event.point;
     // circlePaths.bringToFront();
     generateConnections(circlePaths);
-
 }
 
 
@@ -100,7 +99,7 @@ function onMouseMove(event) {
 var connections = new Group();
 function generateConnections(paths) {
     // Remove the last connection paths:
-    connections.children = [];
+    connections.chilnsdren = [];
 
     for (var i = 0, l = paths.length; i < l; i++) {
         for (var j = i - 1; j >= 0; j--) {
@@ -112,9 +111,14 @@ function generateConnections(paths) {
 
         }
     }
+    return connections;
 }
 
-generateConnections(circlePaths);
+var conns = generateConnections(circlePaths);
+// all the connections should be underneath the balls
+// since they have a different color
+conns.sendToBack();
+
 
 // ---------------------------------------------
 function metaball(ball1, ball2, v, handle_len_rate, maxDistance) {
